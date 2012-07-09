@@ -1,0 +1,26 @@
+{
+  "name": "savePngBase64",
+  "version": "1.0",
+  "description": "save local file with npapi",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "popup": "popup.htm"
+  },
+  "background": {
+    "page": "background.htm"
+  },
+  "permissions": [
+    "tabs",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["js/libs/jquery-1.7.2.js", "js/content_scripts/cs.js"]
+    }
+  ],
+  "plugins": [
+    { "path": "npEWebPrint.dll" }
+  ]
+}
