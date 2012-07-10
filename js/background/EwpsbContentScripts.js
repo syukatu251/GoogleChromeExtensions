@@ -1,4 +1,32 @@
-﻿var bgContentScripts = {};
+﻿/// <reference path="../libs/jquery-1.7.2-vsdoc.js" />
+
+
+/// <reference path="EwpsbChrome.js" />
+
+
+
+
+var EwpsbContentScripts = {
+    scrollDeferred: function (in_x, in_y) {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'scroll', x: in_x, y: in_y });
+    },
+
+    getSizeWindowDeferred: function () {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'getSizeWindow' });
+    },
+
+    getSizeDocumentDeferred: function () {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'getSizeDocument' });
+    },
+
+    getPointScrollBarDeferred: function () {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'getPointScrollBar' });
+    }
+};
+
+
+
+var bgContentScripts = {};
 
 bgContentScripts.request = {
     send: function(mapRequest, callback) {
