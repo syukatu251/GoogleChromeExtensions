@@ -11,12 +11,16 @@ var EwpsbContentScripts = {
         return EwpsbChrome.sendRequestDeferred({ requestName: 'scroll', x: in_x, y: in_y });
     },
 
-    getSizeWindowDeferred: function () {
-        return EwpsbChrome.sendRequestDeferred({ requestName: 'getSizeWindow' });
+    getRectWindowDeferred: function () {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'getRectWindow' });
     },
 
-    getSizeDocumentDeferred: function () {
-        return EwpsbChrome.sendRequestDeferred({ requestName: 'getSizeDocument' });
+    getRectDocumentDeferred: function () {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'getRectDocument' });
+    },
+
+    setPointWindowDeferred: function (in_x, in_y) {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'setPointWindow', x: in_x, y: in_y });
     },
 
     getPointScrollBarDeferred: function () {

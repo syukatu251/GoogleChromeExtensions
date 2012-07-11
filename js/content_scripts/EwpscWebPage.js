@@ -6,11 +6,20 @@ var EwpscWebPage = {
         $('body').scrollLeft(in_x).scrollTop(in_y);
     },
 
-    getSizeWindow: function () {
+    getRectWindow: function () {
+        var xWindow = $('body').scrollLeft();
+        var yWindow = $('body').scrollTop();
         var widthWindow = $(window).width();
         var heightWindow = $(window).height();
 
-        return { width: widthWindow, height: heightWindow };
+        return { x: xWindow, y: yWindow, width: widthWindow, height: heightWindow };
+    },
+
+    getRectDocument: function () {
+        var widthDocument = $(document).width();
+        var heightDocument = $(document).height();
+
+        return { x: 0, y: 0, width: widthWindow, height: heightWindow };
     },
 
     getPointScrollBar: function () {

@@ -8,32 +8,32 @@ var EwpsbDom = function (in_strElement) {
 
 
 EwpsbDom.prototype = {
-    getSizeDeferred: function () {
+    getRectDeferred: function () {
         var size;
         var ret_dfd = $.Deferred();
-        var dfdGetSize;
+        var dfdGetRect;
 
         switch (this._strElement) {
             case 'window':
-                dfdGetSize = EwpsbContentScripts.getSizeWindowDeferred();
+                dfdGetRect = EwpsbContentScripts.getRectWindowDeferred();
                 break;
 
             case 'document':
-                dfdGetSize = EwpsbContentScripts.getSizeDocumentDeferred();
+                dfdGetRect = EwpsbContentScripts.getRectDocumentDeferred();
                 break;
 
             default:
-                dfdGetSize = null;
+                dfdGetRect = null;
                 break;
         }
 
-        if (dfdGetSize === null) {
+        if (dfdGetRect === null) {
             ret_dfd.reject();
 
             return ret_dfd.promise();
         }
 
-        dfdGetSize.done(function (out_size) {
+        dfdGetRect.done(function (out_size) {
             ret_dfd.resolve(out_size);
         });
 
@@ -41,29 +41,14 @@ EwpsbDom.prototype = {
         return ret_dfd.promise();
     },
 
-    getWidthDeferred: function () {
-        var ret_dfd = $.Deferred();
-        var dfdGetSize = this.getSizeDeferred();
+    setPointDeferred: function (in_x, in_y) {
+        var dfd = $.Deferred();
+        var dfdSetPointWindow = EwpsbContentScripts.setPointWindowDeferred(in_x, in_y);
 
-        dfdGetSize.done(function (out_size) {
-            var width = out_size.width;
-
-            ret_dfd.resolve(width);
+        dfdSetPointWindow.done(function () {
+            dfd.resolve();
         });
 
-        return ret_dfd.promise();
+        return dfd.promise();
     },
-
-    getHeightDeferred: function () {
-        var ret_dfd = $.Deferred();
-        var dfdGetSize = this.getSizeDeferred();
-
-        dfdGetSize.done(function (out_size) {
-            var height = out_size.height;
-
-            ret_dfd.resolve(height);
-        });
-
-        return ret_dfd.promise();
-    }
 };

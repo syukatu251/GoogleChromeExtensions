@@ -6,8 +6,12 @@ var EwpscBackground = {
         EwpscChrome.addListener('scroll', in_callback);
     },
 
-    addListenerToGetSizeWindow: function (in_callback) {
-        EwpscChrome.addListener('getSizeWindow', in_callback);
+    addListenerToGetRectWindow: function (in_callback) {
+        EwpscChrome.addListener('getRectWindow', in_callback);
+    },
+
+    addListenerToGetRectDocument: function (in_callback) {
+        EwpscChrome.addListener('getRectDocument', in_callback);
     },
 
     addListenerToGetPointScrollBar: function (in_callback) {

@@ -4,7 +4,11 @@
 
 /// <reference path="EwpsbContentScripts.js" />
 /// <reference path="EwpsbDom.js" />
+/// <reference path="EwpsbDomWindow.js" />
+/// <reference path="EwpsbDomDocument.js" />
 /// <reference path="EwpsbScrollBar.js" />
+/// <reference path="../common/EwpsImage.js" />
+/// <reference path="../common/EwpsCanvas.js" />
 
 
 
@@ -12,39 +16,66 @@ var EwpsbWebPage = function () { };
 
 
 EwpsbWebPage.prototype = {
-    captureWindowDeferred: function () {
-        return EwpsbChrome.captureDeferred();
+    captureDocumentDeferred: function () {
+
     },
 
-    captureDocumentDeferred: function () { },
-
-    scrollDeferred: function (in_x, in_y) {
+    captureRectDeferred: function (in_rect) {
+        var self = this;
+        var domWindow = new EwpsbDomWindow();
+        var domDocument = new EwpsbDomDocument();
         var scrollBar = new EwpsbScrollBar();
+        var ret_dfd = $.Deferred();
 
-        return scrollBar.setPointDeferred(in_x, in_y);
+        $.when(domWindow.getRectDeferred(), domDocument.getRectDeferred())
+        .done(function (out_rectWindow, out_rectDocument) {
+            var numScrollX = self._getNumScroll(in_rect.width, out_rectWindow.width);
+            var numScrollY = self._getNumScroll(in_rect.height, out_rectWindow.height);
+            var canvasDocument = new EwpsCanvas(out_rectDocument.width, out_rectDocument.height);
+            var xScrolled, yScrolled;
+
+            for (var j = 0; j <= numScrollY; j++) {
+                for (var i = 0; i <= numScrollX; i++) {
+                    xScrolled = i * out_rectWindow.width + in_rect.x;
+                    yScrolled = j * out_rectWindow.height + in_rect.y;
+
+                    $.when(scrollBar.setPointDeferred(xScrolled, yScrolled))
+                    .done(function () {
+                        self._captureWindowAndDrawCanvas(canvasDocument);
+                    });
+                }
+            }
+
+            ret_dfd.resolve();
+        });
+
+        return ret_dfd.promise();
     },
 
-    scrollXDeferred: function (in_x) {
-        var scrollBar = new EwpsbScrollBar();
+    _captureWindowAndDrawCanvas: function (io_ewpsCanvas) {
+        var domWindow = new EwpsbDomWindow();
 
-        return scrollBar.setXDeferred(in_x);
+        $.when(EwpsbChrome.captureDeferred(), domWindow.getRectDeferred())
+        .done(function (out_strBase64Image, out_rectWindow) {
+            var ewpsImage = new EwpsImage(out_rectWindow, out_strBase64Image);
+
+            $.when(ewpsImage.getImageDeferred())
+            .done(function (out_image) {
+                io_ewpsCanvas.draw(out_image, out_rectWindow.x, out_rectWindow.y);
+            });
+        });
     },
 
-    scrollYDeferred: function (in_y) {
-        var scrollBar = new EwpsbScrollBar();
 
-        return scrollBar.setYDeferred(in_y);
-    },
-
-    scrollHorizontalWindowDeferred: function () {
+    scrollWindowHorizontalDeferred: function () {
         var ret_dfd = $.Deferred();
         var self = this;
+        var domWindow = new EwpsbDom('window');
+        var domDocument = new EwpsbDom('document');
 
-        $.when(this.getWidthWindowDeferred(),
-               this.getWidthDocumentDeferred(),
-               this.getXScrollDeferred())
-        .done(function (out_widthWindow, out_widthDocument, out_xScroll) {
-            var dfdScrollX = self.scrollXDeferred(out_xScroll + out_widthWindow);
+        $.when(domWindow.getRectDeferred(), domDocument.getRectDeferred())
+        .done(function (out_rectWindow, out_rectDocument) {
+            var dfdScrollX = self.scrollXDeferred(out_rectWindow.x + out_widthWindow);
 
             dfdScrollX.done(function () {
                 ret_dfd.resolve();
@@ -54,7 +85,7 @@ EwpsbWebPage.prototype = {
         return ret_dfd.promise();
     },
 
-    scrollVerticalWindowDeferred: function () {
+    scrollWindowVerticalDeferred: function () {
         var ret_dfd = $.Deferred();
         var self = this;
 
@@ -72,61 +103,49 @@ EwpsbWebPage.prototype = {
         return ret_dfd.promise();
     },
 
-    getPointScrollDeferred: function () {
-        var scrollBar = new EwpsbScrollBar();
+    isWindowRightEdgeDeferred: function () {
+        var ret_dfd = $.Deferred();
 
-        return scrollBar.getPointDeferred();
+        $.when(domWindow.getRectDeferred(), domDocument.getRectDeferred())
+        .done(function (out_rectWindow, out_rectDocument) {
+            var rightWindow = out_rectWindow.x + out_rectWindow.width;
+
+            if (rightWindow === out_rectDocument.width) {
+                ret_dfd.resolve(true);
+            } else {
+                ret_dfd.resolve(false);
+            }
+        });
+
+        return ret_dfd.promise();
     },
 
-    getXScrollDeferred: function () {
-        var scrollBar = new EwpsbScrollBar();
+    isWindowBottomDeferred: function () {
+        var ret_dfd = $.Deferred();
 
-        return scrollBar.getXDeferred();
+        $.when(domWindow.getRectDeferred(), domDocument.getRectDeferred())
+        .done(function (out_rectWindow, out_rectDocument) {
+            var bottomWindow = out_rectWindow.y + out_rectWindow.height;
+
+            if (bottomWindow === out_rectDocument.height) {
+                ret_dfd.resolve(true);
+            } else {
+                ret_dfd.resolve(false);
+            }
+        });
+
+        return ret_dfd.promise();
     },
 
-    getYScrollDeferred: function () {
-        var scrollBar = new EwpsbScrollBar();
+    _getNumScroll: function (in_length, in_lengthWindow) {
+        var numScroll;
 
-        return scrollBar.getYDeferred();
-    },
+        if ((in_length % in_lengthWindow) === 0) {
+            numScroll = Math.floor(in_length / in_lengthWindow) - 1;
+        } else {
+            numScroll = Math.floor(in_length / in_lengthWindow);
+        }
 
-    getSizeWindowDeferred: function () {
-        var domWindow = new EwpsbDom('window');
-
-        return domWindow.getSizeDeferred();
-    },
-
-    getWidthWindowDeferred: function () {
-        var domWindow = new EwpsbDom('window');
-
-        return domWindow.getWidthDeferred();
-    },
-
-    getHeightWindowDeferred: function () {
-        var domWindow = new EwpsbDom('window');
-
-        return domWindow.getHeightDeferred();
-    },
-
-    getSizeDocumentDeferred: function () {
-        var domDocument = new EwpsbDom('document');
-
-        return domDocument.getSizeDeferred();
-    },
-
-    getWidthDocumentDeferred: function () {
-        var domDocument = new EwpsbDom('document');
-
-        return domDocument.getWidthDeferred();
-    },
-
-    getHeightDocumentDeferred: function () {
-        var domDocument = new EwpsbDom('document');
-
-        return domDocument.getHeightDeferred();
-    },
-
-    isRightEdgeDeferred: function () { 
-        
+        return numScroll;
     }
 };

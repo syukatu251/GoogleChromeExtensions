@@ -11,11 +11,18 @@ var EwpscContentScripts = {
             out_response();
         });
 
-        EwpscBackground.addListenerToGetSizeWindow(function (out_request, out_response) {
-            var sizeWindow = EwpscWebPage.getSizeWindow();
+        EwpscBackground.addListenerToGetRectWindow(function (out_request, out_response) {
+            var rectWindow = EwpscWebPage.getRectWindow();
 
-            out_response(sizeWindow);
+            out_response(rectWindow);
         });
+
+        EwpscBackground.addListenerToGetRectDocument(function (out_request, out_response) {
+            var rectDocument = EwpscWebPage.getRectDocument();
+
+            out_response(rectDocument);
+        });
+
 
         EwpscBackground.addListenerToGetPointScrollBar(function (out_request, out_response) {
             var pointScrollBar = EwpscWebPage.getPointScrollBar();
