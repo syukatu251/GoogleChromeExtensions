@@ -1,8 +1,7 @@
 ﻿
 var EwpsbPlugin = {
-    save: function (strTitle, strUrl) {
-        var strPngBase64 = bgContentScripts.canvas.getSrcImage();
+    save: function (in_strTitle, in_strUrl, in_strBase64Image) {
         var plugin = document.getElementById('idPlugin');
-        plugin.launchWpPreview(strPngBase64, 'test', 'test.html');
+        plugin.launchWpPreview(in_strBase64Image, in_strTitle, in_strUrl);
     }
 };

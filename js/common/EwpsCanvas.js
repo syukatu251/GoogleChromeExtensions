@@ -1,4 +1,5 @@
-﻿
+﻿/// <reference path="../libs/jquery-1.7.2-vsdoc.js" />
+
 
 var EwpsCanvas = function (in_width, in_height) {
     this._canvas = document.createElement("canvas");
@@ -7,9 +8,13 @@ var EwpsCanvas = function (in_width, in_height) {
 };
 
 EwpsCanvas.prototype = {
-    draw: function (in_image, in_pointImage) {
+    draw: function (in_image, in_xImage, in_yImage) {
         var context = this._canvas.getContext('2d');
 
-        context.drawImage(in_image, in_pointImage.x, in_pointImage.y);
+        context.drawImage(in_image, in_xImage, in_yImage);
+    },
+
+    getCanvas: function () {
+        return this._canvas;
     }
 };

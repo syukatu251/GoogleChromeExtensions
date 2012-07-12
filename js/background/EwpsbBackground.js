@@ -1,20 +1,17 @@
-﻿/// <reference path="EwpsbContentScripts.js" />
+﻿/// <reference path="EwpsbWebPage.js" />
 /// <reference path="EwpsbPlugin.js" />
 
 
 
 var EwpsbBackground = {
     captureWholePage: function () {
-        
-
-
         var self = this;
+        var webPage = new EwpsbWebPage();
 
-        bgContentScripts.page.init(function() {
-            bgContentScripts.canvas.init(bgContentScripts.page.getSizeDocument());
-            bgContentScripts.page.captureWholePage(function() {
-                bgPlugin.save('test', 'test.html');
-            });
+        $.when(webPage.captureDocumentDeferred())
+        .done(function (out_canvas) {
+            console.log(out_canvas);
+            EwpsbPlugin.save('test', 'test.html', out_canvas.toDataURL('image/png'));
         });
     }
 };

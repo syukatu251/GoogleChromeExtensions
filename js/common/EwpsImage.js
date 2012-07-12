@@ -23,12 +23,12 @@ EwpsImage.prototype = {
     },
 
     getImageDeferred: function () {
+        var self = this;
         var ret_dfd = $.Deferred();
-        var image;
 
         $.when(this._dfdLoad)
         .done(function () {
-            image = this._jqImage.get()[0];
+            var image = self._jqImage.get()[0];
             ret_dfd.resolve(image);
         });
 

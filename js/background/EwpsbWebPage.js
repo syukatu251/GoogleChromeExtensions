@@ -3,7 +3,6 @@
 
 
 /// <reference path="EwpsbContentScripts.js" />
-/// <reference path="EwpsbDom.js" />
 /// <reference path="EwpsbDomWindow.js" />
 /// <reference path="EwpsbDomDocument.js" />
 /// <reference path="EwpsbScrollBar.js" />
@@ -17,22 +16,34 @@ var EwpsbWebPage = function () { };
 
 EwpsbWebPage.prototype = {
     captureDocumentDeferred: function () {
+        var self = this;
+        var ret_dfd = $.Deferred();
+        var domDocument = new EwpsbDomDocument();
 
+        $.when(domDocument.getRectDeferred())
+        .done(function (out_rectDocument) {
+            $.when(self.captureRectangleDeferred(out_rectDocument))
+            .done(function (out_canvas) {
+                ret_dfd.resolve(out_canvas);
+            });
+        });
+
+        return ret_dfd.promise();
     },
 
-    captureRectDeferred: function (in_rect) {
+    captureRectangleDeferred: function (in_rect) {
         var self = this;
         var domWindow = new EwpsbDomWindow();
-        var domDocument = new EwpsbDomDocument();
         var scrollBar = new EwpsbScrollBar();
         var ret_dfd = $.Deferred();
 
-        $.when(domWindow.getRectDeferred(), domDocument.getRectDeferred())
-        .done(function (out_rectWindow, out_rectDocument) {
+        $.when(domWindow.getRectDeferred())
+        .done(function (out_rectWindow) {
             var numScrollX = self._getNumScroll(in_rect.width, out_rectWindow.width);
             var numScrollY = self._getNumScroll(in_rect.height, out_rectWindow.height);
-            var canvasDocument = new EwpsCanvas(out_rectDocument.width, out_rectDocument.height);
+            var canvasRectangle = new EwpsCanvas(in_rect.width, in_rect.height);
             var xScrolled, yScrolled;
+            var dfdDrawCanvas;
 
             for (var j = 0; j <= numScrollY; j++) {
                 for (var i = 0; i <= numScrollX; i++) {
@@ -41,18 +52,22 @@ EwpsbWebPage.prototype = {
 
                     $.when(scrollBar.setPointDeferred(xScrolled, yScrolled))
                     .done(function () {
-                        self._captureWindowAndDrawCanvas(canvasDocument);
+                        dfdDrawCanvas = self._captureWindowAndDrawCanvasDeferred(canvasRectangle);
+                        if (i > numScrollX && j > numScrollY) {
+                            dfdDrawCanvas.done(function () {
+                                ret_dfd.resolve(canvasRectangle.getCanvas());
+                            });
+                        }
                     });
                 }
             }
-
-            ret_dfd.resolve();
         });
 
         return ret_dfd.promise();
     },
 
-    _captureWindowAndDrawCanvas: function (io_ewpsCanvas) {
+    _captureWindowAndDrawCanvasDeferred: function (io_ewpsCanvas) {
+        var ret_dfd = $.Deferred();
         var domWindow = new EwpsbDomWindow();
 
         $.when(EwpsbChrome.captureDeferred(), domWindow.getRectDeferred())
@@ -62,76 +77,8 @@ EwpsbWebPage.prototype = {
             $.when(ewpsImage.getImageDeferred())
             .done(function (out_image) {
                 io_ewpsCanvas.draw(out_image, out_rectWindow.x, out_rectWindow.y);
-            });
-        });
-    },
-
-
-    scrollWindowHorizontalDeferred: function () {
-        var ret_dfd = $.Deferred();
-        var self = this;
-        var domWindow = new EwpsbDom('window');
-        var domDocument = new EwpsbDom('document');
-
-        $.when(domWindow.getRectDeferred(), domDocument.getRectDeferred())
-        .done(function (out_rectWindow, out_rectDocument) {
-            var dfdScrollX = self.scrollXDeferred(out_rectWindow.x + out_widthWindow);
-
-            dfdScrollX.done(function () {
                 ret_dfd.resolve();
             });
-        });
-
-        return ret_dfd.promise();
-    },
-
-    scrollWindowVerticalDeferred: function () {
-        var ret_dfd = $.Deferred();
-        var self = this;
-
-        $.when(this.getHeightWindowDeferred(),
-               this.getHeightDocumentDeferred(),
-               this.getYScrollDeferred())
-        .done(function (out_heightWindow, out_heightDocument, out_yScroll) {
-            var dfdScrollY = self.scrollYDeferred(out_yScroll + out_heightWindow);
-
-            dfdScrollX.done(function () {
-                ret_dfd.resolve();
-            });
-        });
-
-        return ret_dfd.promise();
-    },
-
-    isWindowRightEdgeDeferred: function () {
-        var ret_dfd = $.Deferred();
-
-        $.when(domWindow.getRectDeferred(), domDocument.getRectDeferred())
-        .done(function (out_rectWindow, out_rectDocument) {
-            var rightWindow = out_rectWindow.x + out_rectWindow.width;
-
-            if (rightWindow === out_rectDocument.width) {
-                ret_dfd.resolve(true);
-            } else {
-                ret_dfd.resolve(false);
-            }
-        });
-
-        return ret_dfd.promise();
-    },
-
-    isWindowBottomDeferred: function () {
-        var ret_dfd = $.Deferred();
-
-        $.when(domWindow.getRectDeferred(), domDocument.getRectDeferred())
-        .done(function (out_rectWindow, out_rectDocument) {
-            var bottomWindow = out_rectWindow.y + out_rectWindow.height;
-
-            if (bottomWindow === out_rectDocument.height) {
-                ret_dfd.resolve(true);
-            } else {
-                ret_dfd.resolve(false);
-            }
         });
 
         return ret_dfd.promise();

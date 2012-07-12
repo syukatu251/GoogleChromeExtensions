@@ -19,7 +19,7 @@ var EwpscWebPage = {
         var widthDocument = $(document).width();
         var heightDocument = $(document).height();
 
-        return { x: 0, y: 0, width: widthWindow, height: heightWindow };
+        return { x: 0, y: 0, width: widthDocument, height: heightDocument };
     },
 
     getPointScrollBar: function () {
