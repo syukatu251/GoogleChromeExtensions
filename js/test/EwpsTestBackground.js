@@ -5,6 +5,6 @@
 
 
 var EwpsBackgroundTest = {
-    test1: EwpsbWebPageTest._getNumScroll,
+    test1: EwpsbWebPageTest.captureRectangleDeferred,
     test2: EwpsbWebPageTest._captureWindowAndDrawCanvas
 };

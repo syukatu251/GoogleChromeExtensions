@@ -1,7 +1,7 @@
 ﻿/// <reference path="../libs/jquery-1.7.2-vsdoc.js" />
 
 
-var EwpsImage = function (in_rect, in_strBase64Image) {
+var EwpsImage = function (in_strBase64Image, in_rect) {
     var self = this;
     var dfdLoad = $.Deferred();
 

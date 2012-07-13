@@ -12,10 +12,9 @@ EwpsbScrollBar.prototype = {
         var dfdScroll = EwpsbContentScripts.scrollDeferred(in_x, in_y);
 
         dfdScroll.done(function () {
-            setTimeout(function () {
+//            setTimeout(function () {
                 dfd.resolve();
-            }, 10000);
-            
+//            }, 100);
         });
 
         return dfd.promise();

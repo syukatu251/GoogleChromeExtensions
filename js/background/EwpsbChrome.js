@@ -6,7 +6,9 @@ var EwpsbChrome = {
         var ret_dfd = $.Deferred();
 
         chrome.tabs.captureVisibleTab({ format: 'png' }, function (srcImage) {
-            ret_dfd.resolve(srcImage);
+//            setTimeout(function () {
+                ret_dfd.resolve(srcImage);
+//            }, 100);
         });
 
         return ret_dfd.promise();

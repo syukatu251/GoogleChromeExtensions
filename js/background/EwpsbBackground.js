@@ -10,7 +10,6 @@ var EwpsbBackground = {
 
         $.when(webPage.captureDocumentDeferred())
         .done(function (out_canvas) {
-            console.log(out_canvas);
             EwpsbPlugin.save('test', 'test.html', out_canvas.toDataURL('image/png'));
         });
     }

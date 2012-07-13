@@ -34,33 +34,56 @@ EwpsbWebPage.prototype = {
     captureRectangleDeferred: function (in_rect) {
         var self = this;
         var domWindow = new EwpsbDomWindow();
+        var domDocument = new EwpsbDomDocument();
         var scrollBar = new EwpsbScrollBar();
         var ret_dfd = $.Deferred();
 
-        $.when(domWindow.getRectDeferred())
-        .done(function (out_rectWindow) {
+        $.when(domWindow.getRectDeferred(), domDocument.getRectDeferred())
+        .done(function (out_rectWindow, out_rectDocument) {
             var numScrollX = self._getNumScroll(in_rect.width, out_rectWindow.width);
             var numScrollY = self._getNumScroll(in_rect.height, out_rectWindow.height);
-            var canvasRectangle = new EwpsCanvas(in_rect.width, in_rect.height);
-            var xScrolled, yScrolled;
-            var dfdDrawCanvas;
+            var canvasRectangle = new EwpsCanvas(out_rectDocument.width, out_rectDocument.height);
+            var xScrolled = yScrolled = i = j = preI = preJ = 0;
+            var arrayDfd = new Array(numScrollY + 2);
+            var funcResolveDfd = function () { };
 
-            for (var j = 0; j <= numScrollY; j++) {
-                for (var i = 0; i <= numScrollX; i++) {
-                    xScrolled = i * out_rectWindow.width + in_rect.x;
-                    yScrolled = j * out_rectWindow.height + in_rect.y;
-
-                    $.when(scrollBar.setPointDeferred(xScrolled, yScrolled))
-                    .done(function () {
-                        dfdDrawCanvas = self._captureWindowAndDrawCanvasDeferred(canvasRectangle);
-                        if (i > numScrollX && j > numScrollY) {
-                            dfdDrawCanvas.done(function () {
-                                ret_dfd.resolve(canvasRectangle.getCanvas());
-                            });
-                        }
-                    });
+            for (j = 0; j <= numScrollY; j++) {
+                arrayDfd[j] = new Array(numScrollX + 1);
+                for (i = 0; i <= numScrollX; i++) {
+                    arrayDfd[j][i] = $.Deferred();
                 }
             }
+
+            preI = 0;
+            preJ = numScrollY + 1;
+            arrayDfd[preJ] = new Array(1);
+            arrayDfd[preJ][preI] = $.Deferred();
+            arrayDfd[preJ][preI].resolve();
+
+
+            for (j = 0; j <= numScrollY; j++) {
+                for (i = 0; i <= numScrollX; i++) {
+                    $.when(i, j, arrayDfd[preJ][preI]).done(function (out_i, out_j) {
+                        xScrolled = out_i * out_rectWindow.width + in_rect.x;
+                        yScrolled = out_j * out_rectWindow.height + in_rect.y;
+                        $.when(out_i, out_j, scrollBar.setPointDeferred(xScrolled, yScrolled)).done(function (out_i, out_j) {
+                            setTimeout(function () {
+                                $.when(out_i, out_j, self._captureWindowAndDrawCanvasDeferred(canvasRectangle)).done(function (out_i, out_j) {
+                                    arrayDfd[out_j][out_i].resolve();
+                                });
+                            }, 100);
+                        });
+                    });
+
+                    preI = i;
+                    preJ = j;
+                }
+            }
+
+            $.when(arrayDfd[numScrollY][numScrollX]).done(function () {
+                ret_dfd.resolve(canvasRectangle.getCanvas(in_rect));
+            });
+
         });
 
         return ret_dfd.promise();
@@ -72,11 +95,11 @@ EwpsbWebPage.prototype = {
 
         $.when(EwpsbChrome.captureDeferred(), domWindow.getRectDeferred())
         .done(function (out_strBase64Image, out_rectWindow) {
-            var ewpsImage = new EwpsImage(out_rectWindow, out_strBase64Image);
+            var ewpsImage = new EwpsImage(out_strBase64Image, out_rectWindow);
 
-            $.when(ewpsImage.getImageDeferred())
-            .done(function (out_image) {
-                io_ewpsCanvas.draw(out_image, out_rectWindow.x, out_rectWindow.y);
+            $.when(ewpsImage.getImageDeferred()).done(function (out_image) {
+                var rectImage = ewpsImage.getRect();
+                io_ewpsCanvas.draw(out_image, rectImage.x, rectImage.y);
                 ret_dfd.resolve();
             });
         });
