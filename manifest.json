@@ -17,11 +17,23 @@
   "content_scripts": [
     {
       "matches": ["http://*/*", "https://*/*"],
-      "js": ["js/libs/jquery-1.7.2.js",
+	  "css": [
+			"js/libs/development-bundle/themes/base/jquery.ui.core.css",
+			"js/libs/development-bundle/themes/base/jquery.ui.resizable.css",
+			"js/libs/development-bundle/themes/base/jquery.ui.theme.css"
+		],
+      "js": [
+			"js/libs/jquery-1.7.2.js",
+			"js/libs/development-bundle/ui/jquery.ui.core.js",
+			"js/libs/development-bundle/ui/jquery.ui.widget.js",
+			"js/libs/development-bundle/ui/jquery.ui.mouse.js",
+			"js/libs/development-bundle/ui/jquery.ui.draggable.js",
+			"js/libs/development-bundle/ui/jquery.ui.resizable.js",
 			"js/content_scripts/EwpscChrome.js", 
 			"js/content_scripts/EwpscBackground.js", 
 			"js/content_scripts/EwpscWebPage.js", 
-			"js/content_scripts/EwpscContentScripts.js"]
+			"js/content_scripts/EwpscContentScripts.js"
+		]
     }
   ],
   "plugins": [

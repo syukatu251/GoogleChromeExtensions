@@ -21,5 +21,17 @@ var EwpsbContentScripts = {
 
     getPointScrollBarDeferred: function () {
         return EwpsbChrome.sendRequestDeferred({ requestName: 'getPointScrollBar' });
+    },
+
+    appendCoverForClipDeferred: function (in_rectClip) {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'appendCoverForClip', rectClip: in_rectClip });
+    },
+
+    removeCoverForClipDeferred: function () {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'removeCoverForClip' });
+    },
+
+    getRectClipRectangleDeferred: function () {
+        return EwpsbChrome.sendRequestDeferred({ requestName: 'getRectClipRectangle' });
     }
 };

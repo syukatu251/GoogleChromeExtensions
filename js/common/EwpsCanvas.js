@@ -19,23 +19,23 @@ EwpsCanvas.prototype = EwpsCanvasWithCanvas.prototype = {
         context.drawImage(in_image, in_xImage, in_yImage);
     },
 
-    getCanvas: function (in_rectClipping) {
-        if (in_rectClipping === undefined || in_rectClipping === null) {
+    getCanvas: function (in_rectClip) {
+        if (in_rectClip === undefined || in_rectClip === null) {
             return this._canvas;
         }
 
         var ctxDocument = this._canvas.getContext('2d');
-        var imageData = ctxDocument.getImageData(in_rectClipping.x, in_rectClipping.y, in_rectClipping.width, in_rectClipping.height);
-        var canvasClipping = document.createElement("canvas");
-        var ctxClipping;
+        var imageData = ctxDocument.getImageData(in_rectClip.x, in_rectClip.y, in_rectClip.width, in_rectClip.height);
+        var canvasClip = document.createElement("canvas");
+        var ctxClip;
 
-        canvasClipping.width = in_rectClipping.width;
-        canvasClipping.height = in_rectClipping.height;
+        canvasClip.width = in_rectClip.width;
+        canvasClip.height = in_rectClip.height;
 
-        ctxClipping = canvasClipping.getContext('2d');
-        ctxClipping.putImageData(imageData, 0, 0);
+        ctxClip = canvasClip.getContext('2d');
+        ctxClip.putImageData(imageData, 0, 0);
 
-        return canvasClipping;
+        return canvasClip;
     },
 
     getImageDeferred: function () {

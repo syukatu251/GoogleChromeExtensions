@@ -6,9 +6,7 @@ var EwpsbChrome = {
         var ret_dfd = $.Deferred();
 
         chrome.tabs.captureVisibleTab({ format: 'png' }, function (srcImage) {
-//            setTimeout(function () {
-                ret_dfd.resolve(srcImage);
-//            }, 100);
+            ret_dfd.resolve(srcImage);
         });
 
         return ret_dfd.promise();
@@ -21,6 +19,26 @@ var EwpsbChrome = {
             chrome.tabs.sendRequest(tab.id, request, function (out_response) {
                 ret_dfd.resolve(out_response);
             });
+        });
+
+        return ret_dfd.promise();
+    },
+
+    getTitleDeferred: function () {
+        var ret_dfd = $.Deferred();
+
+        chrome.tabs.getSelected(function (tab) {
+            ret_dfd.resolve(tab.title);
+        });
+
+        return ret_dfd.promise();
+    },
+
+    getUrlDeferred: function () {
+        var ret_dfd = $.Deferred();
+
+        chrome.tabs.getSelected(function (tab) {
+            ret_dfd.resolve(tab.url);
         });
 
         return ret_dfd.promise();

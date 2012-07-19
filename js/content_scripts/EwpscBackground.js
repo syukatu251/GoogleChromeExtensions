@@ -16,5 +16,17 @@ var EwpscBackground = {
 
     addListenerToGetPointScrollBar: function (in_callback) {
         EwpscChrome.addListener('getPointScrollBar', in_callback);
+    },
+
+    addListenerToAppendCoverForClip: function (in_callback) {
+        EwpscChrome.addListener('appendCoverForClip', in_callback);
+    },
+
+    addListenerToRemoveCoverForClip: function (in_callback) {
+        EwpscChrome.addListener('removeCoverForClip', in_callback);
+    },
+
+    addListenerToGetRectClipRectangle: function (in_callback) {
+        EwpscChrome.addListener('getRectClipRectangle', in_callback);
     }
 };

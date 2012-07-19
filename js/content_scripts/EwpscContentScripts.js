@@ -29,6 +29,22 @@ var EwpscContentScripts = {
 
             out_response(pointScrollBar);
         });
+
+        EwpscBackground.addListenerToAppendCoverForClip(function (out_request, out_response) {
+            EwpscWebPage.appendCoverForClip(out_request.rectClip);
+            out_response();
+        });
+
+        EwpscBackground.addListenerToRemoveCoverForClip(function (out_request, out_response) {
+            EwpscWebPage.removeCoverForClip();
+            out_response();
+        });
+
+        EwpscBackground.addListenerToGetRectClipRectangle(function (out_request, out_response) {
+            var rectClipRectangle = EwpscWebPage.getRectClipRectangle();
+
+            out_response(rectClipRectangle);
+        });
     }
 };
 

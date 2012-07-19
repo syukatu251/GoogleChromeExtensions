@@ -3,5 +3,8 @@
 
 
 $(document).ready(function () {
-    $('#idButton').click(EwpspBackground.captureWholePage);
+    $('#idButtonCaptureWholePage').click(EwpspBackground.captureWholePage);
+    $('#idButtonAppendCoverForClip').click(EwpspBackground.appendCoverForClip);
+    $('#idButtonRemoveCoverForClip').click(EwpspBackground.removeCoverForClip);
+    $('#idButtonCaptureClipRectangle').click(EwpspBackground.captureClipRectangle);
 });

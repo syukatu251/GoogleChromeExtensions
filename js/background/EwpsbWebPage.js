@@ -15,6 +15,71 @@ var EwpsbWebPage = function () { };
 
 
 EwpsbWebPage.prototype = {
+    addClipRectangleDeferred: function () {
+        var domWindow = new EwpsbDomWindow();
+        var ret_dfd = $.Deferred();
+
+        $.when(domWindow.getRectDeferred()).done(function (out_rectWindow) {
+            var rectClip = { x: Math.floor(out_rectWindow.x + out_rectWindow.width / 4),
+                y: Math.floor(out_rectWindow.y + out_rectWindow.height / 4),
+                width: Math.floor(out_rectWindow.width / 2),
+                height: Math.floor(out_rectWindow.height / 2)
+            };
+
+            $.when(EwpsbContentScripts.appendCoverForClipDeferred(rectClip)).done(function () {
+                ret_dfd.resolve();
+            });
+        });
+
+        return ret_dfd.promise();
+    },
+
+    removeClipRectangleDeferred: function () {
+        var ret_dfd = $.Deferred();
+
+        $.when(EwpsbContentScripts.removeCoverForClipDeferred()).done(function () {
+            ret_dfd.resolve();
+        });
+
+        return ret_dfd.promise();
+    },
+
+    captureClipRectangleDeferred: function () {
+        var ret_dfd = $.Deferred();
+        var self = this;
+
+        $.when(EwpsbContentScripts.getRectClipRectangleDeferred()).done(function (out_rectClipRectangle) {
+            console.log(out_rectClipRectangle);
+            if (out_rectClipRectangle === null) {
+                ret_dfd.reject();
+            }
+
+            $.when(self._captureRectangleDeferred(out_rectClipRectangle)).done(function (out_canvas) {
+                ret_dfd.resolve(out_canvas);
+            });
+        });
+
+        return ret_dfd.promise();
+    },
+
+    getTitleDeferred: function () {
+        return EwpsbChrome.getTitleDeferred();
+    },
+
+    getUrlDeferred: function () {
+        return EwpsbChrome.getUrlDeferred();
+    },
+
+    getWidthWindowDeferred: function () {
+        var ret_dfd = $.Deferred();
+
+        $.when(EwpsbContentScripts.getRectWindowDeferred()).done(function (out_rectWindow) {
+            ret_dfd.resolve(out_rectWindow.width);
+        });
+
+        return ret_dfd.promise();
+    },
+
     captureDocumentDeferred: function () {
         var self = this;
         var ret_dfd = $.Deferred();
@@ -22,7 +87,7 @@ EwpsbWebPage.prototype = {
 
         $.when(domDocument.getRectDeferred())
         .done(function (out_rectDocument) {
-            $.when(self.captureRectangleDeferred(out_rectDocument))
+            $.when(self._captureRectangleDeferred(out_rectDocument))
             .done(function (out_canvas) {
                 ret_dfd.resolve(out_canvas);
             });
@@ -31,7 +96,7 @@ EwpsbWebPage.prototype = {
         return ret_dfd.promise();
     },
 
-    captureRectangleDeferred: function (in_rect) {
+    _captureRectangleDeferred: function (in_rect) {
         var self = this;
         var domWindow = new EwpsbDomWindow();
         var domDocument = new EwpsbDomDocument();
@@ -71,7 +136,7 @@ EwpsbWebPage.prototype = {
                                 $.when(out_i, out_j, self._captureWindowAndDrawCanvasDeferred(canvasRectangle)).done(function (out_i, out_j) {
                                     arrayDfd[out_j][out_i].resolve();
                                 });
-                            }, 100);
+                            }, 500);
                         });
                     });
 
