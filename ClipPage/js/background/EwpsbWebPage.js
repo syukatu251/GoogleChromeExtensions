@@ -136,7 +136,7 @@ EwpsbWebPage.prototype = {
                                 $.when(out_i, out_j, self._captureWindowAndDrawCanvasDeferred(canvasRectangle)).done(function (out_i, out_j) {
                                     arrayDfd[out_j][out_i].resolve();
                                 });
-                            }, 500);
+                            }, 200);
                         });
                     });
 

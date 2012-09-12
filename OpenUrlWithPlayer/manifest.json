@@ -1,0 +1,14 @@
+﻿{
+  // Required
+  "name": "Open Url With Player",
+  "version": "1.0",
+  "manifest_version": 2,
+
+  "permissions": [
+    "contextMenus",
+	"tabs"
+  ],
+  "background": {
+    "page": "background.html"
+  }
+}

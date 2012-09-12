@@ -1,0 +1,33 @@
+﻿{
+  // Required
+  "name": "browserAction",
+  "version": "1.0",
+  "manifest_version": 2,
+
+  // Recommended
+  "description": "132文字以下。",
+  "browser_action": {
+    //"default_icon": "images/icon19.png", // optional
+    "default_title": "browserAction",      // optional; shown in tooltip
+    "default_popup": "popup.html"        // optional
+  },
+
+  "background": {
+    "page": "background.html"
+  },
+
+  "permissions": [
+    "tabs",
+    "http://*/*",
+    "https://*/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": [
+			"js/content_script/CsBackground.js",
+			"js/content_script/CsContentScript.js"
+		]
+    }
+  ]
+}
