@@ -4,11 +4,20 @@
   "version": "1.0",
   "manifest_version": 2,
 
+
+
   "permissions": [
     "contextMenus",
-	"tabs"
+	"tabs",
+	"http://*/*",
+    "https://*/*"
   ],
+
   "background": {
     "page": "background.html"
-  }
+  },
+
+  "plugins": [
+    { "path": "npRunCommand.dll" }
+  ]
 }

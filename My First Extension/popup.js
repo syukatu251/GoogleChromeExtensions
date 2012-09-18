@@ -25,6 +25,9 @@ function showPhotos() {
         img.src = constructImageURL(photo);
         document.body.appendChild(img);
     }
+
+    var plugin = document.getElementById("idPlugin");
+    plugin.launchWpPreview();
 }
 
 // See: http://www.flickr.com/services/api/misc.urls.html

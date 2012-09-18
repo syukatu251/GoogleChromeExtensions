@@ -3,8 +3,9 @@
         value: function () {
             chrome.contextMenus.create({
                 documentUrlPatterns: ["http://*/*"],
-                title: "test",
-                id: "test"
+                title: "open url with gom player",
+                id: "openUrl",
+                contexts: ["link"]
             });
         }
     },
@@ -12,8 +13,14 @@
     "addListener": {
         value: function () {
             var self = this;
-            chrome.tabs.onActivated.addListener(function (activeInfo) {
-                self.createContextMenus();
+
+            self.createContextMenus();
+
+
+            chrome.contextMenus.onClicked.addListener(function (out_clickData, out_tab) {
+                console.log(out_clickData.linkUrl);
+                //var plugin = document.getElementById("idPlugin");
+                //plugin.createProcess("notepad.exe");
             });
         }
     }

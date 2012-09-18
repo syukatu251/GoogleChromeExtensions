@@ -10,5 +10,9 @@
   },
   "permissions": [
     "http://api.flickr.com/"
+  ],
+
+  "plugins": [
+	{ "path": "npEWebPrint.dll" }
   ]
 }
