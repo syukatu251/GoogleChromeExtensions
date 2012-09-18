@@ -1,0 +1,19 @@
+﻿{
+  // Required
+  "name": "popup debug",
+  "version": "1.0",
+  "manifest_version": 2,
+
+
+
+  "permissions": [
+    "contextMenus",
+	"tabs",
+	"http://*/*",
+    "https://*/*"
+  ],
+
+  "background": {
+    "page": "background.html"
+  }
+}

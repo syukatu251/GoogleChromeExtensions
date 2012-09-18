@@ -1,0 +1,22 @@
+﻿{
+  // Required
+  "name": "haiboku wo shiritai",
+  "version": "1.0",
+  "manifest_version": 2,
+
+
+
+  "permissions": [
+	"http://*/*",
+    "https://*/*"
+  ],
+
+  "browser_action": {
+    "default_title": "haiboku wo shiritai",      // optional; shown in tooltip
+    "default_popup": "popup.html"        // optional
+  },
+
+  "background": {
+    "page": "background.html"
+  }
+}

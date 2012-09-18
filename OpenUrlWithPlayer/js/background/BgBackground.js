@@ -19,6 +19,9 @@
 
             chrome.contextMenus.onClicked.addListener(function (out_clickData, out_tab) {
                 console.log(out_clickData.linkUrl);
+                var regexp = /^http/;
+                var strMmsUrl = out_clickData.linkUrl.replace(regexp, "mms");
+                console.log(strMmsUrl);
                 //var plugin = document.getElementById("idPlugin");
                 //plugin.createProcess("notepad.exe");
             });
