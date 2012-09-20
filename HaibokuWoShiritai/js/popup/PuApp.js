@@ -1,21 +1,9 @@
 ﻿/// <reference path="../libs/jquery-1.8.1.js" />
 /// <reference path="../common/CmDate.js" />
+/// <reference path="../common/CmTabs.js" />
+/// <reference path="PuForm.js" />
 /// <reference path="PuListCollection.js" />
 
-var PuAppModel = Object.create({}, {
-    "dfdTab": {
-        get: function () {
-            var self = this;
-            var dfd = $.Deferred();
-
-            chrome.tabs.getCurrent(function (tab) {
-                dfd.resolve(tab);
-            });
-
-            return dfd.promise();
-        }
-    }
-});
 
 
 var PuAppController = Object.create({}, {
@@ -25,11 +13,9 @@ var PuAppController = Object.create({}, {
             $(function () {
                 self.render();
                 self.addListener();
-                $.when(PuAppModel.dfdTab).done(function (out_tab) {
-                    alert(out_tab.url);
-                    $("#textUrl").val(out_tab.url);
-                });
-                $("#textStartTime").val(CmDate.strNow);
+   
+                PuForm.strUrl = self.tab.url;
+                PuForm.strStartTime = CmDate.strNow;
             });
         }
     },
@@ -42,15 +28,33 @@ var PuAppController = Object.create({}, {
 
     "addListener": {
         value: function () {
-            $("form").submit(function () {
-                PuListCollectionController.appendListInTextField();
+            var self = this;
+            PuForm.onSubmit(function (out_strUrl, out_strStartTime) {
+                if (PuForm.isValid()) {
+                    PuListCollectionController.appendList({
+                        strTitle: self.tab.title,
+                        strUrl: out_strUrl,
+                        strStartTime: out_strStartTime
+                    });
+                }
             });
 
-            $("button").click(function () {
+            $("#buttonClearList").click(function () {
                 PuListCollectionController.clearList();
             });
+
+            PuListCollectionController.addListener();
         }
+    },
+
+    "tab": {
+        value: null,
+        writable: true
     }
 });
 
-PuAppController.onReady();
+
+$.when(CmTabs.dfdActiveTab).done(function (out_tab) {
+    PuAppController.tab = out_tab;
+    PuAppController.onReady();
+});

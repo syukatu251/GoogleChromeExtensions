@@ -45,23 +45,21 @@ var BgApp = Object.create({}, {
 
             this.arrayTimerId = [];
 
-            this.arrayList.forEach(function (out_list) {
+            this.arrayList.forEach(function (out_list, out_index) {
                 var secondDif = new Date(out_list.strStartTime) - Date.now();
                 var timerId = setTimeout(function () {
                     self.createTab(out_list.strUrl);
-                }, secondDif);
 
-                this.arrayTimerId.push(timerId);
+                    var array = self.arrayList;
+                    array.splice(out_index, 1);
+                    self.arrayList = array;
+
+                }, secondDif + 1000);
+
+                self.arrayTimerId.push(timerId);
             });
         }
     }
 });
 
 BgApp.setTimeout();
-
-//var dfd = BgApp.getUrlData("http://www.alc.co.jp/");
-
-//$.when(dfd).done(function (data) {
-//    console.log($(data).find("a").first().attr("href"));
-//    BgApp.createTab($(data).find("a").first().attr("href"));
-//});

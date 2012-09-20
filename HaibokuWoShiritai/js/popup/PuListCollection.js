@@ -1,5 +1,8 @@
 ﻿/// <reference path="../libs/jquery-1.8.1.js" />
 
+/// <reference path="../common/CmTabs.js" />
+
+
 var PuListCollectionModel = Object.create({}, {
     "array": {
         get: function () {
@@ -22,13 +25,11 @@ var PuListCollectionModel = Object.create({}, {
         }
     },
 
-    "appendListInTextField": {
-        value: function () {
-            if ($("#textUrl").val() !== "" && $("#textStartTime").val() !== "") {
-                this.appendList({ strUrl: $("#textUrl").val(), strStartTime: $("#textStartTime").val() });
-                $("#textUrl").val("");
-                $("#textStartTime").val("");
-            }
+    "removeList": {
+        value: function (in_index) {
+            var array = this.array;
+            array.splice(in_index, 1);
+            this.array = array;
         }
     }
 
@@ -39,8 +40,10 @@ var PuListCollectionView = Object.create({}, {
         set: function (in_array) {
             $("ul").empty();
             in_array.forEach(function (out_list) {
-                var secondDif = new Date(out_list.strStartTime) - Date.now();
-                $("ul").append($("<li>").text(out_list.strUrl + " : " + out_list.strStartTime));
+                var jqLi = $("<li>").text(out_list.strTitle + " : " + out_list.strStartTime);
+                var jqButton = $("<button>").text("remove");
+                jqLi.append(jqButton);
+                $("ul").append(jqLi);
             });
         }
     }
@@ -53,9 +56,9 @@ var PuListCollectionController = Object.create({}, {
         }
     },
 
-    "appendListInTextField": {
-        value: function () {
-            PuListCollectionModel.appendListInTextField();
+    "appendList": {
+        value: function (in_list) {
+            PuListCollectionModel.appendList(in_list);
             this.render();
         }
     },
@@ -64,6 +67,23 @@ var PuListCollectionController = Object.create({}, {
         value: function () {
             PuListCollectionModel.array = [];
             this.render();
+        }
+    },
+
+    "removeList": {
+        value: function (in_index) {
+            PuListCollectionModel.removeList(in_index);
+            this.render();
+        }
+    },
+
+    "addListener": {
+        value: function () {
+            var self = this;
+            $("ul").on("click", "button", function () {
+                self.removeList($(this).parent().index());
+                $(this).parent().remove();
+            });
         }
     }
 });
