@@ -22,6 +22,7 @@ var PuAppController = Object.create({}, {
 
     "render": {
         value: function () {
+            $("#pTitle").text(this.tab.title);
             PuListCollectionController.render();
         }
     },
@@ -29,11 +30,11 @@ var PuAppController = Object.create({}, {
     "addListener": {
         value: function () {
             var self = this;
-            PuForm.onSubmit(function (out_strUrl, out_strStartTime) {
+            PuForm.onSubmit(function (out_strStartTime) {
                 if (PuForm.isValid()) {
                     PuListCollectionController.appendList({
                         strTitle: self.tab.title,
-                        strUrl: out_strUrl,
+                        strUrl: self.tab.url,
                         strStartTime: out_strStartTime
                     });
                 }

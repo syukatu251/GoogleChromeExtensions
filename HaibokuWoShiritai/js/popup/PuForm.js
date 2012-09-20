@@ -2,16 +2,6 @@
 
 
 var PuForm = Object.create({}, {
-    "strUrl": {
-        get: function () {
-            return $("#textUrl").val();
-        },
-
-        set: function (in_strUrl) {
-            $("#textUrl").val(in_strUrl);
-        }
-    },
-
     "strStartTime": {
         get: function () {
             return $("#textStartTime").val();
@@ -25,7 +15,7 @@ var PuForm = Object.create({}, {
     "isValid": {
         value: function () {
             var bValid = false;
-            if ($("#textUrl").val() !== "" && $("#textStartTime").val() !== "") {
+            if ($("#textStartTime").val() !== "") {
                 bValid = true;
             }
             return bValid;
@@ -36,7 +26,7 @@ var PuForm = Object.create({}, {
         value: function (in_func) {
             var self = this;
             $("form").submit(function () {
-                in_func(self.strUrl, self.strStartTime);
+                in_func(self.strStartTime);
             });
         }
     }
