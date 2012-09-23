@@ -1,6 +1,7 @@
 ﻿/// <reference path="../libs/jquery-1.8.1.js" />
 /// <reference path="../common/CmDate.js" />
 /// <reference path="../common/CmTabs.js" />
+
 /// <reference path="PuForm.js" />
 /// <reference path="PuListCollection.js" />
 
@@ -16,6 +17,13 @@ var PuAppController = Object.create({}, {
    
                 PuForm.strUrl = self.tab.url;
                 PuForm.strStartTime = CmDate.strNow;
+
+                var bgNicoNama = chrome.extension.getBackgroundPage().CmNicoNama;
+
+                $.when(bgNicoNama.getDfdDate(self.tab.url)).done(function (out_date) {
+                    PuForm.strStartTime = CmDate.toStr(out_date);
+                });
+
             });
         }
     },
