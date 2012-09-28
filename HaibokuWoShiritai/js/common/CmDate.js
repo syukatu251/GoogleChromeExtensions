@@ -1,4 +1,4 @@
-﻿var CmDate = Object.create({}, {
+var CmDate = Object.create({}, {
     strNow: {
         get: function () {
             var dateNow = new Date();

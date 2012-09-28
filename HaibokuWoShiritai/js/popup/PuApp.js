@@ -1,4 +1,4 @@
-﻿/// <reference path="../libs/jquery-1.8.1.js" />
+/// <reference path="../libs/jquery-1.8.1.js" />
 /// <reference path="../common/CmDate.js" />
 /// <reference path="../common/CmTabs.js" />
 
