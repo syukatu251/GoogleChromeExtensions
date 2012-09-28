@@ -2,12 +2,19 @@
     strNow: {
         get: function () {
             var dateNow = new Date();
-            var strNow = "";
-            var month = dateNow.getMonth() + 1;
-            strNow += dateNow.getFullYear() + "/" + month + "/" + dateNow.getDate() + " ";
-            strNow += dateNow.getHours() + ":" + dateNow.getMinutes();
 
-            return strNow;
+            return this.toStr(dateNow);
+        }
+    },
+
+    toStr: {
+        value: function (in_date) {
+            var strDate = "";
+            var month = in_date.getMonth() + 1;
+            strDate += in_date.getFullYear() + "/" + month + "/" + in_date.getDate() + " ";
+            strDate += in_date.getHours() + ":" + in_date.getMinutes();
+
+            return strDate;
         }
     }
 });
