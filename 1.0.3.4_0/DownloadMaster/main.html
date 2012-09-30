@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+	<head>
+        <!--Google Analytics-->
+        <script type="text/javascript" src="scripts/galoader.js"></script>
+    </head>
+    <body>   
+
+        <!-- This is for facebook like button-->        
+        <script type="text/javascript" src="http://static.ak.fbcdn.net/connect.php/js/FB.Share"></script>
+        <div id="fb-root"></div>
+        <script type="text/javascript">    
+            (function (d, s, id) {
+                var js, fjs = d.getElementsByTagName(s)[0];
+                if (d.getElementById(id)) return;
+                js = d.createElement(s); js.id = id;
+                js.src = "//connect.facebook.net/en_US/all.js#xfbml=1";
+                fjs.parentNode.insertBefore(js, fjs);
+            } (document, 'script', 'facebook-jssdk'));
+        </script>
+
+
+        <!--Header table for components alignment-->
+        <table width="97%" border="0">
+            <tr>
+                <!--Extension name in title-->                
+                <td>
+                    <div align="left" style="color:#4b0082;background-color:white;font: 34px tahoma;height:48px;">Download Master</div>
+                </td>
+                                
+                <td>
+                    <!--Facebook share button (depricated by Facebook)-->
+                    <!--                    
+                        <div id="divFacebookButton" align="right">
+                            <a name="fb_share" type="button_count" share_url="https://chrome.google.com/webstore/detail/mcceagdollnkjlogmdckgjakjapmkdjf">Share DM</a>
+                        </div>
+                    -->
+                
+                    <!--Facebook Like button - http://developers.facebook.com/docs/reference/plugins/like/ -->
+                    <div align="right" >
+                        <div class="fb-like" data-href="https://chrome.google.com/webstore/detail/mcceagdollnkjlogmdckgjakjapmkdjf" data-send="false" data-layout="button_count" data-show-faces="false" data-font="tahoma"></div>
+                    </div>
+                </td>
+            </tr>
+        </table>                 
+
+        <!--Contains extension's default message-->
+        <div id="divNoLinkMessage" class="messageToUser"></div>                         
+   
+        <!-- From some reason these can't be loaded from a js -->        
+        <link rel="stylesheet" href="scripts/jquery-ui-1.8.21.css" type="text/css" media="all">       
+        <script type="text/javascript" src="scripts/jquery-1.7.2.min.js"></script>
+        <script type="text/javascript" src="scripts/jquery-ui-1.8.21.min.js"></script>
+        
+        <!--This js will load all extension scripts and start it -->
+        <script type="text/javascript" src="scripts/extension_loader.js"></script>  
+
+	</body>
+</html>

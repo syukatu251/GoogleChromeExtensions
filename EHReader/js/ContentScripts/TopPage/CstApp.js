@@ -17,4 +17,4 @@ var CstApp = Object.create({}, {
 
 setTimeout(function () {
     CstApp.initialize();
-}, 1000);
+}, 500);

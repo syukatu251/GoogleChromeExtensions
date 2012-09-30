@@ -16,6 +16,18 @@
 		"js/ContentScripts/TopPage/CstImageData.js",
 		"js/ContentScripts/TopPage/CstApp.js"
 	  ]
+    },
+
+	{
+	  "matches": ["http://g.e-hentai.org/g*"],
+      "css": ["css/ContentScripts.css"],
+      "js": [
+		"js/libs/jquery-1.8.1.js",
+		"js/ContentScripts/GallaryPage/CsgImageData.js",
+		"js/ContentScripts/GallaryPage/CsgLocalDirectory.js",
+		"js/ContentScripts/GallaryPage/CsgView.js",
+		"js/ContentScripts/GallaryPage/CsgApp.js"
+	  ]
     }
   ],
 
