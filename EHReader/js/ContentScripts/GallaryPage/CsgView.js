@@ -2,6 +2,11 @@
 
 
 var CsgView = Object.create({}, {
+    "initialize": {
+        value: function () {
+            $('div.csButtonDiv').append($("<button>").attr("id", "csSaveButton"));
+        }
+    },
     "appendImage": {
         value: function (in_jqImage) {
             $("div.csImageViewDiv").append(in_jqImage);
@@ -11,6 +16,14 @@ var CsgView = Object.create({}, {
     "removeImage": {
         value: function () {
             $("div.csImageViewDiv").empty();
+        }
+    },
+
+    "onClickSaveButton": {
+        value: function (in_func) {
+            $('#csSaveButton').click(function () {
+                in_func();
+            });
         }
     }
 });

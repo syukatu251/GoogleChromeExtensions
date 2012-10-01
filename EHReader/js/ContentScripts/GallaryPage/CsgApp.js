@@ -1,4 +1,6 @@
 ﻿/// <reference path="../../libs/jquery-1.8.1.js" />
+/// <reference path="../../libs/FileSaver.js" />
+
 /// <reference path="CsgImageData.js" />
 /// <reference path="CsgLocalDirectory.js" />
 /// <reference path="CsgView.js" />
@@ -53,16 +55,20 @@ var CsgApp = Object.create({}, {
                         }
                     });
                 });
-                
-                //CsgImageData.jq.each(function (out_index, out_strUrl) {
-                //    var binder = {};
-                //    var closureJqGet = self.getClosureJqGet.bind(binder)(out_strUrl);
-                //    closureJqGet();
-                //});
             });
             $("#csEndButton").click(function () {
                 arrayDfd = [];
                 CsgView.removeImage();
+            });
+
+            CsgView.onClickSaveButton(function () {
+                CsgImageData.arrayDfdBlob.forEach(function (out_dfdBlob, out_index) {
+                    out_dfdBlob.done(function (out_blob) {
+                        if (out_blob instanceof Blob) {
+                            saveAs(out_blob, out_index + '.jpg');
+                        }
+                    });
+                });
             });
         }
     }

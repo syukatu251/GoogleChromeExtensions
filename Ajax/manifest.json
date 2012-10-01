@@ -1,0 +1,14 @@
+﻿{
+  // Required
+  "name": "Ajax",
+  "version": "1.0",
+  "manifest_version": 2,
+
+  "permissions": [
+    "*://*/*"
+  ],
+
+  "background": {
+    "page": "background.html"
+  }
+}
