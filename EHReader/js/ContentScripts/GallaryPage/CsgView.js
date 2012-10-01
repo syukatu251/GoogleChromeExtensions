@@ -4,7 +4,7 @@
 var CsgView = Object.create({}, {
     "initialize": {
         value: function () {
-            $('div.csButtonDiv').append($("<button>").attr("id", "csSaveButton"));
+            $('div.csButtonDiv').append($("<button>").attr("id", "csSaveButton").text("save"));
         }
     },
     "appendImage": {

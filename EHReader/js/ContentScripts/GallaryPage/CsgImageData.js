@@ -65,9 +65,9 @@ var CsgImageData = Object.create({}, {
             var arrayImageSrc = [];
             var jqImageAnchor = $('a[href^="http://g.e-hentai.org/s/"]');
             jqImageAnchor.map(function (out_index, out_anchor) {
-                $.get(in_anchor.href).done(function (out_html) {
+                $.get(out_anchor.href).done(function (out_html) {
                     arrayImageSrc[out_index] = ($(out_html).find('img[src$=".jpg"]').attr("src"));
-                    if (out_index === jqImageAnchor.length) {
+                    if (out_index === jqImageAnchor.length - 1) {
                         dfdArrayImageSrc.resolve(arrayImageSrc);
                     }
                 })

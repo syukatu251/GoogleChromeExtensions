@@ -13,6 +13,8 @@ var CsgApp = Object.create({}, {
             var self = this;
             var arrayDfd = [];
 
+            CsgView.initialize();
+
             $("#csStartButton").click(function () {
                 var jqSrcDfd = CsgImageData.getJqSrcDfd();
 
