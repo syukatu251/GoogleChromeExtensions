@@ -19,8 +19,8 @@ var CsgImageData = Object.create({}, {
             var arrayImageSrc = [];
             
             (function getImageSrc(in_indexImage) {
-                console.log("getImageSrc", in_indexImage);
-                $.get(jqImageAnchor.eq(in_indexImage + indexStart).href).done(function (out_html) {
+                console.log("getImageSrc", indexStart + in_indexImage);
+                $.get(jqImageAnchor.eq(in_indexImage + indexStart).attr('href')).done(function (out_html) {
                     arrayImageSrc[in_indexImage] = $(out_html).find('img[src$=".jpg"]').attr("src");
                     if (in_indexImage + 1 < indexEnd - indexStart + 1) {
                         getImageSrc(in_indexImage + 1);
@@ -65,17 +65,17 @@ var CsgImageData = Object.create({}, {
 
             dfdArrayImageSrc.done(function (out_arrayImageSrc) {
                 (function getDfdImageInfo(in_indexImage) {
-                    console.log("getDfdImageInfo", in_indexImage);
+                    console.log("getDfdImageInfo", indexStart + in_indexImage);
                     var x = new XMLHttpRequest();
                     x.open('get', out_arrayImageSrc[in_indexImage]);
                     x.responseType = 'blob';
                     x.onreadystatechange = function () {
-                        console.log("onreadystatechange", x.readyState, in_indexImage);
+                        console.log("onreadystatechange", x.readyState, indexStart + in_indexImage);
                         if (x.readyState === 4) {
                             if (x.status === 200 && x.response.size > 50) {
                                 arrayDfdImageInfo[in_indexImage].resolve({
                                     blob: x.response,
-                                    strImageName: self.getStrImageName(out_arrayImageSrc[in_indexImage])
+                                    strImageName: self.getStrImageName(in_indexImage + indexStart + 1)
                                 });
                             } else {
                                 console.log("failed to get image", x.status);
@@ -94,9 +94,8 @@ var CsgImageData = Object.create({}, {
         }
     },
     "getStrImageName": {
-        value: function (in_strImageUrl) {
-            in_strImageUrl.match(/\/(.+\.jpg)$/);
-            return RegExp.$1;
+        value: function (in_indexImageAlt) {
+            return $('#gj').text() + '_' + ("00" + in_indexImageAlt).slice(-3) + '.jpg';
         }
     }
 });

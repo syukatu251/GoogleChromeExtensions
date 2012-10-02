@@ -64,8 +64,10 @@ var CsgApp = Object.create({}, {
             });
 
             CsgView.onClickSaveButton(function () {
-                var arrayDfdBlob = CsgImageData.getArrayDfdImageInfo($('#indexStart').val(), $('#indexEnd').val());
-                CsgImageData.arrayDfdBlob.forEach(function (out_dfdBlob, out_index) {
+                var indexStart = parseInt($('#indexStart').val()) - 1;
+                var indexEnd = parseInt($('#indexEnd').val()) - 1;
+                var arrayDfdBlob = CsgImageData.getArrayDfdImageInfo(indexStart, indexEnd);
+                arrayDfdBlob.forEach(function (out_dfdBlob, out_index) {
                     out_dfdBlob.done(function (out_imageInfo) {
                         if (out_imageInfo) {
                             saveAs(out_imageInfo.blob, out_imageInfo.strImageName);
