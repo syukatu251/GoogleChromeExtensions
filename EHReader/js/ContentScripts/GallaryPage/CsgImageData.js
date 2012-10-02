@@ -2,76 +2,33 @@
 
 
 var CsgImageData = Object.create({}, {
-    "getJqSrcDfd": {
-        value: function (in_index) {
-            var getDfdSrc = function (in_anchor) {
-                var dfdSrc = $.Deferred();
-                $.get(in_anchor.href).done(function (out_html) {
-                    dfdSrc.resolve($(out_html).find('img[src$=".jpg"]').attr("src"));
-                }).fail(function () {
-                    console.log("$.get failed");
-                });
-                return dfdSrc.promise();
-            };
-
-            if (in_index) {
-                var anchor = $('a[href^="http://g.e-hentai.org/s/"]').eq(in_index);
-                return getDfdSrc(anchor);
-            } else {
-                return $('a[href^="http://g.e-hentai.org/s/"]').map(function (out_index, out_anchor) {
-                    return getDfdSrc(out_anchor);
-                });
+    "getDfdArrayImageSrc": {
+        value: function (in_indexStart, in_indexEnd) {
+            var jqImageAnchor = $('a[href^="http://g.e-hentai.org/s/"]');
+            var indexStart = 0;
+            var indexEnd = jqImageAnchor.length;
+            if ($.isNumeric(in_indexStart)) {
+                indexStart = parseInt(in_indexStart, 10);
+                indexEnd = indexStart;
             }
-        }
-    },
+            if ($.isNumeric(in_indexEnd)) {
+                indexEnd = parseInt(in_indexEnd, 10);
+            }
 
-    "jqImg": {
-        get: function () {
-            return $('img[src="http://ehgt.org/g/blank.gif"]').parent('a').map(function (out_index, out_anchor) {
-                return out_anchor.href;
-            });
-        }
-    },
-
-    "arrayDfdBlob": {
-        get: function () {
-            var arrayDfdBlob = [];
-
-            $('a[href^="http://g.e-hentai.org/s/"]').map(function (out_index, out_anchor) {
-                arrayDfdBlob.push($.Deferred());
-
-                $.get(in_anchor.href).pipe(function (out_html) {
-                    return $(out_html).find('img[src$=".jpg"]').attr("src");
-                }).done(function (out_strImageSrc) {
-                    var x = new XMLHttpRequest();
-                    x.open('get', out_strImageSrc);
-                    x.responseType = 'blob';
-                    x.onload = function (r) {
-                        arrayDfdBlob[0].resolve(x.response);
-                    };
-                    x.send();
-                });
-            });
-
-            return arrayDfdBlob.forEach(function (out_dfdBlob) {
-                out_dfdBlob.promise();
-            });
-        }
-    },
-
-    "dfdArrayImageSrc": {
-        get: function () {
             var dfdArrayImageSrc = $.Deferred();
             var arrayImageSrc = [];
-            var jqImageAnchor = $('a[href^="http://g.e-hentai.org/s/"]');
-            jqImageAnchor.map(function (out_index, out_anchor) {
-                $.get(out_anchor.href).done(function (out_html) {
-                    arrayImageSrc[out_index] = ($(out_html).find('img[src$=".jpg"]').attr("src"));
-                    if (out_index === jqImageAnchor.length - 1) {
+            
+            (function getImageSrc(in_indexImage) {
+                console.log("getImageSrc", in_indexImage);
+                $.get(jqImageAnchor.eq(in_indexImage + indexStart).href).done(function (out_html) {
+                    arrayImageSrc[in_indexImage] = $(out_html).find('img[src$=".jpg"]').attr("src");
+                    if (in_indexImage + 1 < indexEnd - indexStart + 1) {
+                        getImageSrc(in_indexImage + 1);
+                    } else {
                         dfdArrayImageSrc.resolve(arrayImageSrc);
                     }
-                })
-            });
+                });
+            }(0));
 
             return dfdArrayImageSrc.promise();
         }
@@ -83,30 +40,49 @@ var CsgImageData = Object.create({}, {
         }
     },
 
-    "arrayDfdBlob": {
-        get: function () {
-            var arrayDfdBlob = [];
+    "getArrayDfdImageInfo": {
+        value: function (in_indexStart, in_indexEnd) {
+            var self = this;
+            var arrayDfdImageInfo = [];
             var length = this.length;
-            for (var i = 0; i < length; i++) {
-                arrayDfdBlob[i] = $.Deferred();
+            var indexStart = 0;
+            var indexEnd = length;
+
+            if ($.isNumeric(in_indexStart)) {
+                indexStart = parseInt(in_indexStart, 10);
+                indexEnd = indexStart;
+            }
+            if ($.isNumeric(in_indexEnd)) {
+                indexEnd = parseInt(in_indexEnd, 10);
             }
 
-            this.dfdArrayImageSrc.done(function (out_arrayImageSrc) {
-                (function getDfdBlob(in_indexImage) {
+
+            for (var i = 0; i < indexEnd - indexStart + 1; i++) {
+                arrayDfdImageInfo[i] = $.Deferred();
+            }
+
+            var dfdArrayImageSrc = this.getDfdArrayImageSrc(indexStart, indexEnd);
+
+            dfdArrayImageSrc.done(function (out_arrayImageSrc) {
+                (function getDfdImageInfo(in_indexImage) {
+                    console.log("getDfdImageInfo", in_indexImage);
                     var x = new XMLHttpRequest();
                     x.open('get', out_arrayImageSrc[in_indexImage]);
                     x.responseType = 'blob';
                     x.onreadystatechange = function () {
-                        console.log(x.readyState, in_indexImage);
+                        console.log("onreadystatechange", x.readyState, in_indexImage);
                         if (x.readyState === 4) {
-                            if (x.status === 200) {
-                                arrayDfdBlob[in_indexImage].resolve(x.response);
+                            if (x.status === 200 && x.response.size > 50) {
+                                arrayDfdImageInfo[in_indexImage].resolve({
+                                    blob: x.response,
+                                    strImageName: self.getStrImageName(out_arrayImageSrc[in_indexImage])
+                                });
                             } else {
                                 console.log("failed to get image", x.status);
-                                arrayDfdBlob[in_indexImage].resolve(null);
+                                arrayDfdImageInfo[in_indexImage].resolve(null);
                             }
                             if (in_indexImage + 1 < out_arrayImageSrc.length) {
-                                getDfdBlob(in_indexImage + 1);
+                                getDfdImageInfo(in_indexImage + 1);
                             }
                         }
                     };
@@ -114,49 +90,13 @@ var CsgImageData = Object.create({}, {
                 }(0));
             });
 
-            return arrayDfdBlob;
+            return arrayDfdImageInfo;
         }
     },
-
-    "dfdArrayBlob": {
-        get: function () {
-            return this.getDfdArrayBlob();
-        }
-    },
-
-    "getDfdArrayBlob": {
-        value: function (in_indexStart, in_indexEnd) {
-            var dfdArrayImageSrc = this.dfdArrayImageSrc;
-            var indexStart = 0;
-            var indexEnd = dfdArrayImageSrc.length - 1;
-
-            if ($.isNumeric(in_indexStart)) {
-                indexStart = in_indexStart;
-            }
-            if ($.isNumeric(in_indexEnd) && in_indexEnd < indexEnd) {
-                indexEnd = in_indexEnd;
-            }
-
-            var dfdArrayBlob = $.Deferred();
-            dfdArrayImageSrc.done(function (out_arrayImageSrc) {
-                var arrayBlob = [];
-                (function getBlob(in_indexImage) {
-                    var x = new XMLHttpRequest();
-                    x.open('get', out_arrayImageSrc[in_indexImage + indexStart]);
-                    x.responseType = 'blob';
-                    x.onload = function (r) {
-                        arrayBlob[in_indexImage] = x.response;
-                        if (in_indexImage + 1 < indexEnd - indexStart) {
-                            getBlob(in_indexImage + 1);
-                        } else {
-                            dfdArrayBlob.resolve(arrayBlob);
-                        }
-                    };
-                    x.send();
-                }(0));
-            });
-
-            return dfdArrayBlob.promise();
+    "getStrImageName": {
+        value: function (in_strImageUrl) {
+            in_strImageUrl.match(/\/(.+\.jpg)$/);
+            return RegExp.$1;
         }
     }
 });

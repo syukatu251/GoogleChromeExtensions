@@ -48,7 +48,7 @@ var CsgApp = Object.create({}, {
                                 } catch (e) {
                                     console.log(e);
                                 }
-                                
+
                                 //if (!out_src) {
                                 //    console.log("failed to get src", out_index);
                                 //    jqImg.trigger("load");
@@ -64,10 +64,11 @@ var CsgApp = Object.create({}, {
             });
 
             CsgView.onClickSaveButton(function () {
+                var arrayDfdBlob = CsgImageData.getArrayDfdImageInfo($('#indexStart').val(), $('#indexEnd').val());
                 CsgImageData.arrayDfdBlob.forEach(function (out_dfdBlob, out_index) {
-                    out_dfdBlob.done(function (out_blob) {
-                        if (out_blob instanceof Blob) {
-                            saveAs(out_blob, out_index + '.jpg');
+                    out_dfdBlob.done(function (out_imageInfo) {
+                        if (out_imageInfo) {
+                            saveAs(out_imageInfo.blob, out_imageInfo.strImageName);
                         }
                     });
                 });
