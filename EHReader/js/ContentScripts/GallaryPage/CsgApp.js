@@ -4,6 +4,7 @@
 /// <reference path="CsgImageData.js" />
 /// <reference path="CsgLocalDirectory.js" />
 /// <reference path="CsgView.js" />
+/// <reference path="CsgUser.js" />
 
 
 
@@ -16,64 +17,56 @@ var CsgApp = Object.create({}, {
             CsgView.initialize();
 
             $("#csStartButton").click(function () {
-                var jqSrcDfd = CsgImageData.getJqSrcDfd();
-
-                if (arrayDfd.length === 0) {
-                    arrayDfd = new Array(jqSrcDfd.length + 1);
-                    for (var i = 0; i < arrayDfd.length; i++) {
-                        arrayDfd[i] = $.Deferred();
-                    }
-                    arrayDfd[0].resolve();
-                }
-
-                CsgView.removeImage();
-
-                jqSrcDfd.each(function (out_index, out_dfdSrc) {
-                    arrayDfd[out_index].done(function (out_jqImg) {
-                        if (out_jqImg && out_jqImg.src) {
-                            CsgView.appendImage(jqImg);
-                        } else {
-                            out_dfdSrc.done(function (out_src) {
-                                var jqImg = $("<img>").attr("src", out_src).width($(document).width() / 2 - 5);
-                                var idSetTimeout = setTimeout(function () {
-                                    jqImg.trigger("load");
-                                }, 15000);
-                                try {
-                                    jqImg.on("load", function () {
-                                        clearTimeout(idSetTimeout);
-                                        CsgView.appendImage(jqImg);
-                                        arrayDfd[out_index] = $.Deferred().resolve(jqImg);
-                                        arrayDfd[out_index + 1].resolve();
-                                    });
-                                } catch (e) {
-                                    console.log(e);
-                                }
-
-                                //if (!out_src) {
-                                //    console.log("failed to get src", out_index);
-                                //    jqImg.trigger("load");
-                                //}
-                            });
-                        }
-                    });
-                });
             });
             $("#csEndButton").click(function () {
+                CsgImageData.abort();
                 arrayDfd = [];
                 CsgView.removeImage();
             });
 
             CsgView.onClickSaveButton(function () {
-                var indexStart = parseInt($('#indexStart').val()) - 1;
-                var indexEnd = parseInt($('#indexEnd').val()) - 1;
-                var arrayDfdBlob = CsgImageData.getArrayDfdImageInfo(indexStart, indexEnd);
-                arrayDfdBlob.forEach(function (out_dfdBlob, out_index) {
-                    out_dfdBlob.done(function (out_imageInfo) {
-                        if (out_imageInfo) {
-                            saveAs(out_imageInfo.blob, out_imageInfo.strImageName);
-                        }
+                var indexStart = 0;
+                var indexEnd = CsgImageData.length;
+
+                if ($.isNumeric(CsgUser.indexStart)) {
+                    indexStart = parseInt(CsgUser.indexStart, 10) - 1;
+                }
+                if ($.isNumeric(CsgUser.indexEnd)) {
+                    indexEnd = parseInt(CsgUser.indexEnd, 10) - 1;
+                }
+
+                (function saveImage(in_partedStart) {
+                    var partedEnd = indexEnd;
+                    if (partedEnd - in_partedStart > 10) {
+                        partedEnd = in_partedStart + 9;
+                    }
+
+                    var arrayDfdBlob = CsgImageData.getArrayDfdImageInfo(in_partedStart, partedEnd);
+                    arrayDfdBlob.forEach(function (out_dfdBlob, out_index) {
+                        out_dfdBlob.done(function (out_imageInfo) {
+                            if (out_imageInfo) {
+                                saveAs(out_imageInfo.blob, out_imageInfo.strImageName);
+                            }
+                            if (out_index >= partedEnd - partedStart) {
+                                saveImage(partedEnd + 1);
+                            }
+                        });
                     });
-                });
+                }(indexStart));
+
+                for (var i = 0; i < Math.ceil(indexEnd / 10) ; i++) {
+                    indexEnd - partedStart > 10 ? partedEnd = partedStart + 9 : partedEnd = indexEnd;
+
+                    var arrayDfdBlob = CsgImageData.getArrayDfdImageInfo(partedStart, partedEnd);
+                    arrayDfdBlob.forEach(function (out_dfdBlob, out_index) {
+                        out_dfdBlob.done(function (out_imageInfo) {
+                            if (out_imageInfo) {
+                                saveAs(out_imageInfo.blob, out_imageInfo.strImageName);
+                            }
+                        });
+                    });
+                    partedStart = partedEnd + 1;
+                }
             });
         }
     }

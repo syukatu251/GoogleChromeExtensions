@@ -4,9 +4,14 @@
 var CsgView = Object.create({}, {
     "initialize": {
         value: function () {
-            $('div.csButtonDiv').append($("<button>").attr("id", "csSaveButton").text("save"));
-            $('div.csButtonDiv').append($('<input type="text">').attr('id', 'indexStart').width(20));
-            $('div.csButtonDiv').append($('<input type="text">').attr('id', 'indexEnd').width(20));
+            var jqP = $('<p>');
+            jqP.append($("<button>").attr("id", "csSaveButton").text("save"));
+            jqP.append($('<input type="text">').attr('id', 'indexStart').width(20));
+            jqP.append($('<input type="text">').attr('id', 'indexEnd').width(20));
+            $('div.csButtonDiv').append(jqP);
+
+            var jqPLog = $('<p>').attr('id', 'csLog');
+            $('div.csButtonDiv').append(jqPLog);
         }
     },
     "appendImage": {

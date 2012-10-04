@@ -29,6 +29,7 @@
 		"js/ContentScripts/GallaryPage/CsgImageData.js",
 		"js/ContentScripts/GallaryPage/CsgLocalDirectory.js",
 		"js/ContentScripts/GallaryPage/CsgView.js",
+		"js/ContentScripts/GallaryPage/CsgUser.js",
 		"js/ContentScripts/GallaryPage/CsgApp.js"
 	  ]
     }
